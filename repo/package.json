@@ -1,0 +1,33 @@
+{
+  "name": "nextjs-performance-optimization-reproducibility",
+  "version": "1.0.0",
+  "description": "Complete reproducibility package for IEEE Access paper: Performance Optimization Strategies for Large-scale Web Applications using Next.js",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lighthouse": "node lighthouse/run-lighthouse.js",
+    "wpt": "node wpt/wpt-run.js",
+    "analyze": "node analysis/analyze-metrics.js",
+    "test:load": "cd tests/load && k6 run k6-ramp.js",
+    "test:spike": "cd tests/load && k6 run k6-spike.js"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "@tensorflow/tfjs": "^4.15.0",
+    "@tensorflow/tfjs-node": "^4.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.3.0",
+    "lighthouse": "^11.4.0",
+    "puppeteer": "^21.6.0"
+  }
+}
+

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Performance Analysis Report - All Experiments</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    h1 { color: #333; }
+    h2 { color: #666; margin-top: 2rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { border: 1px solid #ddd; padding: 0.75rem; text-align: left; }
+    th { background-color: #f5f5f5; font-weight: bold; }
+    tr:nth-child(even) { background-color: #f9f9f9; }
+    .metric-section { margin-bottom: 3rem; }
+    .experiment-name { font-weight: bold; color: #0070f3; }
+  </style>
+</head>
+<body>
+  <h1>Performance Analysis Report</h1>
+  <p>Generated: 2025-11-27T03:48:47.485Z</p>
+  
+  
+    <div class="metric-section">
+      <h2>Baseline (Unoptimized)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>N</th>
+            <th>Mean</th>
+            <th>SD</th>
+            <th>CI 95% Lower</th>
+            <th>CI 95% Upper</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+            <tr>
+              <td>TTFB</td>
+              <td>30</td>
+              <td>330.31</td>
+              <td>14.01</td>
+              <td>325.30</td>
+              <td>335.33</td>
+            </tr>
+          
+            <tr>
+              <td>LCP</td>
+              <td>30</td>
+              <td>3.44</td>
+              <td>0.15</td>
+              <td>3.39</td>
+              <td>3.50</td>
+            </tr>
+          
+            <tr>
+              <td>FID</td>
+              <td>30</td>
+              <td>193.49</td>
+              <td>8.11</td>
+              <td>190.59</td>
+              <td>196.39</td>
+            </tr>
+          
+            <tr>
+              <td>CLS</td>
+              <td>30</td>
+              <td>0.25</td>
+              <td>0.03</td>
+              <td>0.24</td>
+              <td>0.26</td>
+            </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="metric-section">
+      <h2>Optimized (ISR + Edge)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>N</th>
+            <th>Mean</th>
+            <th>SD</th>
+            <th>CI 95% Lower</th>
+            <th>CI 95% Upper</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+            <tr>
+              <td>TTFB</td>
+              <td>30</td>
+              <td>203.88</td>
+              <td>9.18</td>
+              <td>200.60</td>
+              <td>207.17</td>
+            </tr>
+          
+            <tr>
+              <td>LCP</td>
+              <td>30</td>
+              <td>2.56</td>
+              <td>0.09</td>
+              <td>2.53</td>
+              <td>2.59</td>
+            </tr>
+          
+            <tr>
+              <td>FID</td>
+              <td>30</td>
+              <td>72.99</td>
+              <td>5.24</td>
+              <td>71.11</td>
+              <td>74.86</td>
+            </tr>
+          
+            <tr>
+              <td>CLS</td>
+              <td>30</td>
+              <td>0.07</td>
+              <td>0.01</td>
+              <td>0.06</td>
+              <td>0.07</td>
+            </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="metric-section">
+      <h2>AI-Enhanced (with Prefetching)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>N</th>
+            <th>Mean</th>
+            <th>SD</th>
+            <th>CI 95% Lower</th>
+            <th>CI 95% Upper</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+            <tr>
+              <td>TTFB</td>
+              <td>30</td>
+              <td>192.46</td>
+              <td>6.88</td>
+              <td>190.00</td>
+              <td>194.92</td>
+            </tr>
+          
+            <tr>
+              <td>LCP</td>
+              <td>30</td>
+              <td>2.36</td>
+              <td>0.09</td>
+              <td>2.32</td>
+              <td>2.39</td>
+            </tr>
+          
+            <tr>
+              <td>FID</td>
+              <td>30</td>
+              <td>61.92</td>
+              <td>3.11</td>
+              <td>60.81</td>
+              <td>63.03</td>
+            </tr>
+          
+            <tr>
+              <td>CLS</td>
+              <td>30</td>
+              <td>0.05</td>
+              <td>0.01</td>
+              <td>0.05</td>
+              <td>0.05</td>
+            </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="metric-section">
+      <h2>k6 Ramp Test</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>N</th>
+            <th>Mean</th>
+            <th>SD</th>
+            <th>CI 95% Lower</th>
+            <th>CI 95% Upper</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+            <tr>
+              <td>Response Time</td>
+              <td>10</td>
+              <td>219.83</td>
+              <td>13.45</td>
+              <td>210.21</td>
+              <td>229.45</td>
+            </tr>
+          
+            <tr>
+              <td>TTFB</td>
+              <td>10</td>
+              <td>165.97</td>
+              <td>6.19</td>
+              <td>161.54</td>
+              <td>170.40</td>
+            </tr>
+          
+            <tr>
+              <td>Error Rate</td>
+              <td>10</td>
+              <td>0.22</td>
+              <td>0.14</td>
+              <td>0.11</td>
+              <td>0.32</td>
+            </tr>
+          
+            <tr>
+              <td>Throughput</td>
+              <td>10</td>
+              <td>90.88</td>
+              <td>4.76</td>
+              <td>87.47</td>
+              <td>94.29</td>
+            </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="metric-section">
+      <h2>k6 Spike Test</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>N</th>
+            <th>Mean</th>
+            <th>SD</th>
+            <th>CI 95% Lower</th>
+            <th>CI 95% Upper</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+            <tr>
+              <td>Response Time</td>
+              <td>10</td>
+              <td>454.41</td>
+              <td>35.54</td>
+              <td>428.98</td>
+              <td>479.83</td>
+            </tr>
+          
+            <tr>
+              <td>TTFB</td>
+              <td>10</td>
+              <td>275.52</td>
+              <td>12.59</td>
+              <td>266.52</td>
+              <td>284.53</td>
+            </tr>
+          
+            <tr>
+              <td>Error Rate</td>
+              <td>10</td>
+              <td>1.85</td>
+              <td>0.61</td>
+              <td>1.42</td>
+              <td>2.28</td>
+            </tr>
+          
+            <tr>
+              <td>Throughput</td>
+              <td>10</td>
+              <td>471.81</td>
+              <td>11.18</td>
+              <td>463.81</td>
+              <td>479.80</td>
+            </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="metric-section">
+      <h2>Artillery Spike Test</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>N</th>
+            <th>Mean</th>
+            <th>SD</th>
+            <th>CI 95% Lower</th>
+            <th>CI 95% Upper</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+            <tr>
+              <td>Response Time</td>
+              <td>10</td>
+              <td>240.65</td>
+              <td>12.78</td>
+              <td>231.51</td>
+              <td>249.79</td>
+            </tr>
+          
+            <tr>
+              <td>Error Rate</td>
+              <td>9</td>
+              <td>0.64</td>
+              <td>0.19</td>
+              <td>0.49</td>
+              <td>0.79</td>
+            </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+</body>
+</html>

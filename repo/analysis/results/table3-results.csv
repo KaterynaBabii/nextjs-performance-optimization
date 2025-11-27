@@ -1,0 +1,5 @@
+Metric,N,Mean,SD,CI_95_Lower,CI_95_Upper,Baseline,Optimized,Improvement_vs_Baseline_%,Improvement_vs_Optimized_%
+TTFB,30,214.90,6.29,212.65,217.15,320,198,32.8,-8.5
+LCP,30,2.65,0.06,2.63,2.67,3.4,2.48,22.1,-6.8
+FID,30,86.37,3.28,85.19,87.54,190,68,54.5,-27.0
+CLS,30,0.08,0.01,0.08,0.08,0.24,0.06,66.4,-34.4

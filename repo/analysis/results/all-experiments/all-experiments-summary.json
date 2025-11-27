@@ -1,0 +1,276 @@
+{
+  "timestamp": "2025-11-27T03:48:47.485Z",
+  "experiments": [
+    {
+      "name": "Baseline (Unoptimized)",
+      "type": "metrics",
+      "results": [
+        {
+          "metric": "TTFB",
+          "n": 30,
+          "mean": 330.312282062349,
+          "sd": 14.012467627290377,
+          "ci95_lower": 325.2979849199075,
+          "ci95_upper": 335.32657920479056,
+          "baseline": 320,
+          "optimized": 198,
+          "improvement_vs_baseline": -3.222588144484071,
+          "improvement_vs_optimized": -66.82438487997425
+        },
+        {
+          "metric": "LCP",
+          "n": 30,
+          "mean": 3.4437453462461134,
+          "sd": 0.14660964322377285,
+          "ci95_lower": 3.3912817592017026,
+          "ci95_upper": 3.496208933290524,
+          "baseline": 3.4,
+          "optimized": 2.48,
+          "improvement_vs_baseline": -1.2866278307680437,
+          "improvement_vs_optimized": -38.860699445407796
+        },
+        {
+          "metric": "FID",
+          "n": 30,
+          "mean": 193.48985638256497,
+          "sd": 8.110862634385663,
+          "ci95_lower": 190.58742146445482,
+          "ci95_upper": 196.3922913006751,
+          "baseline": 190,
+          "optimized": 68,
+          "improvement_vs_baseline": -1.8367665171394556,
+          "improvement_vs_optimized": -184.54390644494848
+        },
+        {
+          "metric": "CLS",
+          "n": 30,
+          "mean": 0.2522376741461204,
+          "sd": 0.029330292960153763,
+          "ci95_lower": 0.2417419636054131,
+          "ci95_upper": 0.2627333846868277,
+          "baseline": 0.24,
+          "optimized": 0.06,
+          "improvement_vs_baseline": -5.099030894216844,
+          "improvement_vs_optimized": -320.3961235768674
+        }
+      ]
+    },
+    {
+      "name": "Optimized (ISR + Edge)",
+      "type": "metrics",
+      "results": [
+        {
+          "metric": "TTFB",
+          "n": 30,
+          "mean": 203.88213447096263,
+          "sd": 9.182496087044735,
+          "ci95_lower": 200.5962204467921,
+          "ci95_upper": 207.16804849513315,
+          "baseline": 320,
+          "optimized": 198,
+          "improvement_vs_baseline": 36.286832977824176,
+          "improvement_vs_optimized": -2.9707749853346597
+        },
+        {
+          "metric": "LCP",
+          "n": 30,
+          "mean": 2.5633932513343676,
+          "sd": 0.08831812499577568,
+          "ci95_lower": 2.531789016193826,
+          "ci95_upper": 2.594997486474909,
+          "baseline": 3.4,
+          "optimized": 2.48,
+          "improvement_vs_baseline": 24.606080843106835,
+          "improvement_vs_optimized": -3.3626311021922413
+        },
+        {
+          "metric": "FID",
+          "n": 30,
+          "mean": 72.9868167602402,
+          "sd": 5.242551577880266,
+          "ci95_lower": 71.11079377162184,
+          "ci95_upper": 74.86283974885856,
+          "baseline": 190,
+          "optimized": 68,
+          "improvement_vs_baseline": 61.585885915663056,
+          "improvement_vs_optimized": -7.333554059176768
+        },
+        {
+          "metric": "CLS",
+          "n": 30,
+          "mean": 0.06548051640546568,
+          "sd": 0.00856794658616647,
+          "ci95_lower": 0.06241451609586041,
+          "ci95_upper": 0.06854651671507095,
+          "baseline": 0.24,
+          "optimized": 0.06,
+          "improvement_vs_baseline": 72.71645149772263,
+          "improvement_vs_optimized": -9.134194009109468
+        }
+      ]
+    },
+    {
+      "name": "AI-Enhanced (with Prefetching)",
+      "type": "metrics",
+      "results": [
+        {
+          "metric": "TTFB",
+          "n": 30,
+          "mean": 192.45938894733374,
+          "sd": 6.88070375875681,
+          "ci95_lower": 189.99716072934837,
+          "ci95_upper": 194.9216171653191,
+          "baseline": 320,
+          "optimized": 198,
+          "improvement_vs_baseline": 39.856440953958206,
+          "improvement_vs_optimized": 2.7982884104375074
+        },
+        {
+          "metric": "LCP",
+          "n": 30,
+          "mean": 2.3556585560273127,
+          "sd": 0.09046491369850079,
+          "ci95_lower": 2.3232861024156337,
+          "ci95_upper": 2.3880310096389916,
+          "baseline": 3.4,
+          "optimized": 2.48,
+          "improvement_vs_baseline": 30.715924822726098,
+          "improvement_vs_optimized": 5.0137679021244885
+        },
+        {
+          "metric": "FID",
+          "n": 30,
+          "mean": 61.91950475785689,
+          "sd": 3.1131628615326856,
+          "ci95_lower": 60.80547373521702,
+          "ci95_upper": 63.03353578049676,
+          "baseline": 190,
+          "optimized": 68,
+          "improvement_vs_baseline": 67.41078696954901,
+          "improvement_vs_optimized": 8.941904767857512
+        },
+        {
+          "metric": "CLS",
+          "n": 30,
+          "mean": 0.048590389300425314,
+          "sd": 0.006185789496681689,
+          "ci95_lower": 0.04637683295746207,
+          "ci95_upper": 0.05080394564338856,
+          "baseline": 0.24,
+          "optimized": 0.06,
+          "improvement_vs_baseline": 79.75400445815612,
+          "improvement_vs_optimized": 19.016017832624474
+        }
+      ]
+    },
+    {
+      "name": "k6 Ramp Test",
+      "type": "load",
+      "results": [
+        {
+          "metric": "Response Time",
+          "n": 10,
+          "mean": 219.8326743756126,
+          "sd": 13.451445560596442,
+          "ci95_lower": 210.21075842518053,
+          "ci95_upper": 229.4545903260447,
+          "unit": "ms"
+        },
+        {
+          "metric": "TTFB",
+          "n": 10,
+          "mean": 165.970858956473,
+          "sd": 6.189239493384581,
+          "ci95_lower": 161.54365134267653,
+          "ci95_upper": 170.39806657026946,
+          "unit": "ms"
+        },
+        {
+          "metric": "Error Rate",
+          "n": 10,
+          "mean": 0.217390337989856,
+          "sd": 0.1445547388229319,
+          "ci95_lower": 0.11398929154282725,
+          "ci95_upper": 0.3207913844368847,
+          "unit": "%"
+        },
+        {
+          "metric": "Throughput",
+          "n": 10,
+          "mean": 90.87857054588056,
+          "sd": 4.763713523739323,
+          "ci95_lower": 87.47105193155225,
+          "ci95_upper": 94.28608916020887,
+          "unit": "req/s"
+        }
+      ]
+    },
+    {
+      "name": "k6 Spike Test",
+      "type": "load",
+      "results": [
+        {
+          "metric": "Response Time",
+          "n": 10,
+          "mean": 454.40703725075,
+          "sd": 35.54241779367584,
+          "ci95_lower": 428.983289658322,
+          "ci95_upper": 479.83078484317804,
+          "unit": "ms"
+        },
+        {
+          "metric": "TTFB",
+          "n": 10,
+          "mean": 275.52443087378595,
+          "sd": 12.586913179356639,
+          "ci95_lower": 266.52092116610623,
+          "ci95_upper": 284.52794058146566,
+          "unit": "ms"
+        },
+        {
+          "metric": "Error Rate",
+          "n": 10,
+          "mean": 1.8510583631903266,
+          "sd": 0.6059996010623468,
+          "ci95_lower": 1.4175824812748719,
+          "ci95_upper": 2.2845342451057813,
+          "unit": "%"
+        },
+        {
+          "metric": "Throughput",
+          "n": 10,
+          "mean": 471.80536639521034,
+          "sd": 11.177518238271078,
+          "ci95_lower": 463.81000704601803,
+          "ci95_upper": 479.80072574440265,
+          "unit": "req/s"
+        }
+      ]
+    },
+    {
+      "name": "Artillery Spike Test",
+      "type": "load",
+      "results": [
+        {
+          "metric": "Response Time",
+          "n": 10,
+          "mean": 240.65327438333898,
+          "sd": 12.77718314549829,
+          "ci95_lower": 231.51366319765384,
+          "ci95_upper": 249.79288556902412,
+          "unit": "ms"
+        },
+        {
+          "metric": "Error Rate",
+          "n": 9,
+          "mean": 0.6444444444444444,
+          "sd": 0.19499920860871378,
+          "ci95_lower": 0.49455505276054634,
+          "ci95_upper": 0.7943338361283424,
+          "unit": "%"
+        }
+      ]
+    }
+  ],
+  "total_experiments": 6
+}

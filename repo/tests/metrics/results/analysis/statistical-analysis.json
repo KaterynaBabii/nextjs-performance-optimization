@@ -1,0 +1,57 @@
+{
+  "timestamp": "2025-11-27T03:48:47.482Z",
+  "results": [
+    {
+      "metric": "TTFB",
+      "n": 30,
+      "mean": 192.45938894733374,
+      "sd": 6.88070375875681,
+      "ci95_lower": 189.99716072934837,
+      "ci95_upper": 194.9216171653191,
+      "baseline": 320,
+      "optimized": 198,
+      "improvement_vs_baseline": 39.856440953958206,
+      "improvement_vs_optimized": 2.7982884104375074
+    },
+    {
+      "metric": "LCP",
+      "n": 30,
+      "mean": 2.3556585560273127,
+      "sd": 0.09046491369850079,
+      "ci95_lower": 2.3232861024156337,
+      "ci95_upper": 2.3880310096389916,
+      "baseline": 3.4,
+      "optimized": 2.48,
+      "improvement_vs_baseline": 30.715924822726098,
+      "improvement_vs_optimized": 5.0137679021244885
+    },
+    {
+      "metric": "FID",
+      "n": 30,
+      "mean": 61.91950475785689,
+      "sd": 3.1131628615326856,
+      "ci95_lower": 60.80547373521702,
+      "ci95_upper": 63.03353578049676,
+      "baseline": 190,
+      "optimized": 68,
+      "improvement_vs_baseline": 67.41078696954901,
+      "improvement_vs_optimized": 8.941904767857512
+    },
+    {
+      "metric": "CLS",
+      "n": 30,
+      "mean": 0.048590389300425314,
+      "sd": 0.006185789496681689,
+      "ci95_lower": 0.04637683295746207,
+      "ci95_upper": 0.05080394564338856,
+      "baseline": 0.24,
+      "optimized": 0.06,
+      "improvement_vs_baseline": 79.75400445815612,
+      "improvement_vs_optimized": 19.016017832624474
+    }
+  ],
+  "summary": {
+    "total_metrics": 4,
+    "total_samples": 120
+  }
+}

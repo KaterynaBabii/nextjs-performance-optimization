@@ -1,0 +1,22 @@
+{
+  "audits": {
+    "server-response-time": {
+      "numericValue": 226,
+      "displayValue": "226 ms"
+    },
+    "largest-contentful-paint": {
+      "numericValue": 2760,
+      "displayValue": "2.76 s"
+    },
+    "max-potential-fid": {
+      "numericValue": 93,
+      "displayValue": "93 ms"
+    },
+    "cumulative-layout-shift": {
+      "numericValue": 0.09,
+      "displayValue": "0.09"
+    }
+  },
+  "fetchTime": "2025-11-27T03:44:21.705Z",
+  "runIndex": 22
+}

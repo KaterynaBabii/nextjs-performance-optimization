@@ -1,0 +1,63 @@
+# Software Versions for Reproducibility
+# Generated: 2024-01-15
+# 
+# This file documents all software versions used in the experiments.
+# Update this file when versions change.
+
+# Node.js and Package Manager
+Node.js: v20.11.0
+NPM: 10.2.4
+
+# Next.js Framework
+Next.js: 14.2.0
+React: 18.3.0
+React-DOM: 18.3.0
+
+# TypeScript
+TypeScript: 5.3.0
+
+# Web Vitals Library
+web-vitals: 3.5.0
+
+# Load Testing Tools
+k6: 0.48.0
+Artillery: 2.0.0
+
+# Performance Testing
+Lighthouse: 11.4.0
+Chrome/Chromium: 120.0.6099.109
+
+# Python and ML Libraries
+Python: 3.11.0
+TensorFlow: 2.15.0
+NumPy: 1.24.0
+Pandas: 2.0.0
+Jupyter: 1.0.0
+Matplotlib: 3.7.0
+
+# Operating System
+OS: macOS 14.6.0 (or Linux Ubuntu 22.04 LTS)
+Kernel: Darwin 23.6.0 (or Linux 5.15.0)
+
+# Hardware (Example - update with actual hardware)
+CPU: Intel Xeon E5-2686 v4 @ 2.30GHz (or Apple M1/M2)
+CPU Cores: 16
+RAM: 32 GB
+Storage: SSD 500 GB
+
+# Network Simulation Parameters
+RTT: 80ms ± 10ms
+Throughput: 10 Mbps
+Packet Loss: 0.3%
+CPU Throttling: 4x slowdown (mobile simulation)
+
+# Browser Configuration
+User Agent: Mozilla/5.0 (Linux; Android 10; Pixel 3) AppleWebKit/537.36
+Screen: 412x915 (mobile emulation)
+Device Scale Factor: 2.625
+
+# Notes
+# - All versions should be pinned in package.json/requirements.txt
+# - Use exact versions for reproducibility
+# - Document any version changes in reproducibility-notes.md
+

@@ -1,0 +1,5 @@
+Metric,N,Mean,SD,CI_95_Lower,CI_95_Upper
+Response Time,10,219.83,13.45,210.21,229.45
+TTFB,10,165.97,6.19,161.54,170.40
+Error Rate,10,0.22,0.14,0.11,0.32
+Throughput,10,90.88,4.76,87.47,94.29

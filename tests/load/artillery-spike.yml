@@ -1,0 +1,86 @@
+# Artillery Spike Test Configuration
+# Tests application resilience under sudden traffic spikes
+# RPS: 100 → 500 (Pareto distribution)
+# Duration: 60 seconds
+
+config:
+  target: 'http://localhost:3000'
+  phases:
+    # Warm-up phase: gradual increase
+    - duration: 10
+      arrivalRate: 100
+      name: "Warm-up"
+    # Spike phase: sudden increase to 500 RPS
+    - duration: 30
+      arrivalRate: 500
+      name: "Spike"
+    # Recovery phase: gradual decrease
+    - duration: 20
+      arrivalRate: 100
+      name: "Recovery"
+  processor: "./artillery-processor.js"
+  payload:
+    # Optional: CSV file with test data
+    # path: "./test-data.csv"
+    # fields:
+    #   - "userId"
+    #   - "pageId"
+  plugins:
+    expect: {}
+    metrics-by-endpoint:
+      stripQueryString: true
+  defaults:
+    headers:
+      User-Agent: "Artillery Load Test"
+      Accept: "application/json"
+  # Think time distribution (Pareto distribution)
+  # Simulates realistic user behavior with variable delays
+  think: 1-3
+
+scenarios:
+  # Scenario 1: Home page load
+  - name: "Home Page Load"
+    weight: 40
+    flow:
+      - get:
+          url: "/"
+          expect:
+            - statusCode: 200
+            - contentType: html
+      - think: 1-3
+
+  # Scenario 2: Metrics dashboard
+  - name: "Metrics Dashboard"
+    weight: 30
+    flow:
+      - get:
+          url: "/metrics"
+          expect:
+            - statusCode: 200
+            - contentType: html
+      - think: 2-5
+
+  # Scenario 3: API endpoint
+  - name: "Web Vitals API"
+    weight: 30
+    flow:
+      - get:
+          url: "/api/web-vitals"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      - think: 1-2
+
+  # Scenario 4: Full user journey
+  - name: "Full User Journey"
+    weight: 20
+    flow:
+      - get:
+          url: "/"
+      - think: 2-4
+      - get:
+          url: "/metrics"
+      - think: 1-2
+      - get:
+          url: "/api/web-vitals"
+
