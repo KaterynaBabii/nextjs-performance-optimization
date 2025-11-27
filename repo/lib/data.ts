@@ -53,6 +53,12 @@ const products: Product[] = [
   { id: 6, name: 'JavaScript Guide', description: 'Complete JavaScript guide', price: 39.99, categoryId: 5, categoryName: 'Books', sku: 'BOK-001', stock: 75 },
 ]
 
+export async function getAllProducts(): Promise<Product[]> {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 100))
+  return products
+}
+
 export async function getCategories(): Promise<Category[]> {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 50))

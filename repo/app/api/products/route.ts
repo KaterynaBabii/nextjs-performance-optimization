@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getProductsByCategory, getProduct } from '@/lib/data'
+import { getAllProducts, getProductsByCategory, getProduct } from '@/lib/data'
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -36,10 +36,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(products)
     }
 
-    return NextResponse.json(
-      { error: 'Missing categoryId or id parameter' },
-      { status: 400 }
-    )
+    // If no specific id or category is provided, return all products
+    const allProducts = await getAllProducts()
+    return NextResponse.json(allProducts)
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },
