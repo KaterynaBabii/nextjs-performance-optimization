@@ -17,7 +17,10 @@
     "test:load:all": "cd tests/load && for i in {1..10}; do echo \"Running k6 ramp test $i...\"; k6 run k6-ramp.js --out json=results/k6-ramp/k6-run-$(printf \"%03d\" $i).json; done && for i in {1..10}; do echo \"Running k6 spike test $i...\"; k6 run k6-spike.js --out json=results/k6-spike/k6-run-$(printf \"%03d\" $i).json; done",
     "test:baseline": "echo \"Running baseline experiments...\" && echo \"Note: Disable optimizations in code, then run: npm run lighthouse\"",
     "test:optimized": "echo \"Running optimized experiments...\" && echo \"Note: Enable ISR + Edge, then run: npm run lighthouse\"",
-    "test:ai-enhanced": "echo \"Running AI-enhanced experiments...\" && echo \"Note: Enable prefetching, then run: npm run lighthouse\""
+    "test:ai-enhanced": "echo \"Running AI-enhanced experiments...\" && echo \"Note: Enable prefetching, then run: npm run lighthouse\"",
+    "verify:ai": "node scripts/verify-ai-setup.js",
+    "setup:model-dir": "bash scripts/setup-model-directory.sh",
+    "deploy:model": "bash scripts/deploy-model.sh"
   },
   "dependencies": {
     "next": "^14.2.0",

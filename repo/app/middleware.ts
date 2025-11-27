@@ -91,10 +91,6 @@ export async function middleware(request: NextRequest) {
       
       const inferenceTime = Date.now() - inferenceStart
       
-      // Log overhead for monitoring (can be removed in production)
-      if (process.env.NODE_ENV === 'development') {
-        console.debug(`[MIDDLEWARE] AI inference time: ${inferenceTime}ms`)
-      }
       
       // Pass predicted routes to client via response header
       // Client component will read this and prefetch routes
@@ -105,7 +101,8 @@ export async function middleware(request: NextRequest) {
         // This implements the paper's claim: "integrating with the CDN cache to prewarm edge nodes"
         // Fire-and-forget: doesn't block user request
         const baseUrl = `${request.nextUrl.protocol}//${request.nextUrl.host}`
-        prewarmCDNCache(predictedRoutes, baseUrl).catch(() => {
+        prewarmCDNCache(predictedRoutes, baseUrl).then(() => {
+        }).catch(() => {
           // Silently fail - prewarm is non-critical
         })
       }

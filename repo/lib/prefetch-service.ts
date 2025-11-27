@@ -55,27 +55,37 @@ async function loadModel(): Promise<void> {
       
       try {
         model = await tf.loadLayersModel(modelUrl)
-        console.log('[PREFETCH-SERVICE] TensorFlow.js model loaded successfully')
+        console.log('[AI-MODEL] ✅ TensorFlow.js model loaded successfully from:', modelUrl)
+        console.log('[AI-MODEL] Model architecture:', {
+          layers: model.layers.length,
+          trainableParams: model.countParams()
+        })
       } catch (error) {
         // Edge Runtime may not support tfjs-node, gracefully fall back
-        console.warn('[PREFETCH-SERVICE] Could not load TensorFlow.js model, using rule-based fallback:', error)
+        console.warn('[AI-MODEL] ❌ Could not load TensorFlow.js model, using rule-based fallback')
+        console.warn('[AI-MODEL] Error details:', error instanceof Error ? error.message : String(error))
+        console.warn('[AI-MODEL] Model URL attempted:', modelUrl)
+        console.warn('[AI-FALLBACK] ⚠️ AI-enhanced experiments will use rule-based prediction, not LSTM model')
         model = null
       }
 
       // Load vocabulary
       // In production, this would be from the same directory as the model
+      const vocabUrl = process.env.VOCAB_URL || '/models/tfjs_model/vocab.json'
       try {
-        const vocabUrl = process.env.VOCAB_URL || '/models/tfjs_model/vocab.json'
         const vocabResponse = await fetch(vocabUrl)
         if (vocabResponse.ok) {
           vocab = await vocabResponse.json()
-          reverseVocab = Object.fromEntries(
-            Object.entries(vocab).map(([k, v]) => [v, k])
-          )
-          console.log('[PREFETCH-SERVICE] Vocabulary loaded successfully')
+          if (vocab) {
+            reverseVocab = Object.fromEntries(
+              Object.entries(vocab).map(([k, v]) => [v, k])
+            )
+            console.log('[AI-MODEL] ✅ Vocabulary loaded successfully, size:', Object.keys(vocab).length)
+          }
         }
       } catch (error) {
-        console.warn('[PREFETCH-SERVICE] Could not load vocabulary, using rule-based fallback:', error)
+        console.warn('[AI-MODEL] ❌ Could not load vocabulary, using rule-based fallback')
+        console.warn('[AI-MODEL] Vocab URL attempted:', vocabUrl)
         vocab = null
         reverseVocab = null
       }
@@ -192,13 +202,24 @@ export async function getPredictedRoutes(paths: string[]): Promise<string[]> {
 
   // Try to use TensorFlow.js model first
   if (model && vocab) {
+    const inferenceStart = Date.now()
     const modelPredictions = await predictWithModel(paths)
+    const inferenceTime = Date.now() - inferenceStart
+    
     if (modelPredictions.length > 0) {
+      console.log('[AI-INFERENCE] ✅ LSTM model prediction:', {
+        inputPaths: paths,
+        predictions: modelPredictions,
+        inferenceTime: `${inferenceTime}ms`
+      })
       return modelPredictions.slice(0, 3)
     }
+  } else {
+    console.log('[AI-FALLBACK] ⚠️ Using rule-based prediction (model not available)')
   }
 
   // Fallback to rule-based prediction (for reproducibility when model not available)
+  console.log('[AI-FALLBACK] Using rule-based prediction for paths:', paths)
   const lastPath = paths[paths.length - 1]
   const predictions: string[] = []
 
@@ -219,7 +240,9 @@ export async function getPredictedRoutes(paths: string[]): Promise<string[]> {
   }
 
   // Return top-3 routes
-  return predictions.slice(0, 3)
+  const finalPredictions = predictions.slice(0, 3)
+  console.log('[AI-FALLBACK] Rule-based predictions:', finalPredictions)
+  return finalPredictions
 }
 
 /**
