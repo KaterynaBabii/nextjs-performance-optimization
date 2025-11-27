@@ -245,8 +245,6 @@ If you see "No router instance found" errors:
 2. Clear browser cache: Hard refresh (Cmd+Shift+R / Ctrl+Shift+R)
 3. Restart dev server
 
-See `repo/BROWSER-CACHE-FIX.md` for detailed instructions.
-
 ### Prefetching Disabled
 Prefetching is currently disabled in middleware for debugging. To re-enable:
 1. Uncomment prefetch code in `repo/app/middleware.ts`
