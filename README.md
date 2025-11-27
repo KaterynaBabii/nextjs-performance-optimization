@@ -269,13 +269,48 @@ Prefetching is currently disabled in middleware for debugging. To re-enable:
 - **k6** (load testing)
 - **Artillery** (load testing)
 
+## Running Experiments
+
+For detailed instructions on running all experiments, see **[EXPERIMENTS-GUIDE.md](./EXPERIMENTS-GUIDE.md)**.
+
+### Quick Start for Experiments
+
+```bash
+# 1. Start the application
+cd repo
+npm run build
+npm run start
+
+# 2. Run load tests (in another terminal)
+cd tests/load
+k6 run k6-ramp.js
+
+# 3. Collect metrics
+cd ../metrics
+node collect-core-web-vitals.js
+
+# 4. Analyze results
+cd ../../analysis
+node analyze-all-experiments.js
+```
+
+### Experiment Scenarios
+
+1. **Baseline**: Unoptimized Next.js app
+2. **Optimized**: With ISR + Edge Middleware
+3. **AI-Enhanced**: With LSTM predictive prefetching
+
+Each scenario requires:
+- 10 load test runs (for statistical significance)
+- 30 metrics collection runs (Lighthouse)
+- Statistical analysis with 95% confidence intervals
+
 ## Documentation
 
+- **Experiments Guide**: See [EXPERIMENTS-GUIDE.md](./EXPERIMENTS-GUIDE.md) for complete experiment instructions
 - **Main App**: See `repo/README.md` for detailed application documentation
 - **AI Model**: See `repo/ai-model/README.md` for LSTM model details
-- **Load Testing**: See `repo/tests/load/README.md`
-- **Metrics**: See `repo/tests/metrics/README.md`
-- **Analysis**: See `repo/analysis/README.md`
+- **Analysis**: See `repo/analysis/README.md` for statistical analysis tools
 
 ## License
 
