@@ -18,8 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <PrefetchRoutesInjector />
-        {/* Temporarily disabled to test - uncomment after clearing .next cache */}
-        {/* <PrefetchClient /> */}
+        <PrefetchClient />
         {children}
       </body>
     </html>

@@ -11,8 +11,13 @@
     "lighthouse": "node lighthouse/run-lighthouse.js",
     "wpt": "node wpt/wpt-run.js",
     "analyze": "node analysis/analyze-metrics.js",
+    "analyze:all": "node analysis/analyze-all-experiments.js",
     "test:load": "cd tests/load && k6 run k6-ramp.js",
-    "test:spike": "cd tests/load && k6 run k6-spike.js"
+    "test:spike": "cd tests/load && k6 run k6-spike.js",
+    "test:load:all": "cd tests/load && for i in {1..10}; do echo \"Running k6 ramp test $i...\"; k6 run k6-ramp.js --out json=results/k6-ramp/k6-run-$(printf \"%03d\" $i).json; done && for i in {1..10}; do echo \"Running k6 spike test $i...\"; k6 run k6-spike.js --out json=results/k6-spike/k6-run-$(printf \"%03d\" $i).json; done",
+    "test:baseline": "echo \"Running baseline experiments...\" && echo \"Note: Disable optimizations in code, then run: npm run lighthouse\"",
+    "test:optimized": "echo \"Running optimized experiments...\" && echo \"Note: Enable ISR + Edge, then run: npm run lighthouse\"",
+    "test:ai-enhanced": "echo \"Running AI-enhanced experiments...\" && echo \"Note: Enable prefetching, then run: npm run lighthouse\""
   },
   "dependencies": {
     "next": "^14.2.0",

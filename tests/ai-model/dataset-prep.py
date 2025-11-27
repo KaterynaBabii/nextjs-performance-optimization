@@ -11,14 +11,21 @@ import pandas as pd
 import json
 from typing import List, Tuple, Dict
 import os
+import random
+
+# Set random seeds for reproducibility (as per paper requirements)
+RANDOM_SEED = 42
+np.random.seed(RANDOM_SEED)
+random.seed(RANDOM_SEED)
 
 # Configuration
-SEQUENCE_LENGTH = 20
-EMBEDDING_SIZE = 64
+# Paper specification: Context window size = 5
+SEQUENCE_LENGTH = 5  # Changed from 20 to match paper
+EMBEDDING_SIZE = 128  # Will be used in training (matches paper)
 BATCH_SIZE = 64
 TRAIN_SPLIT = 0.8
 
-def generate_mock_clickstream_data(num_sessions: int = 10000, num_pages: int = 50) -> pd.DataFrame:
+def generate_mock_clickstream_data(num_sessions: int = 200000, num_pages: int = 50) -> pd.DataFrame:
     """
     Generate mock clickstream data for testing.
     
@@ -119,10 +126,13 @@ def create_sequences(df: pd.DataFrame, vocab: Dict[str, int],
     """
     Convert clickstream data into sequences for LSTM training.
     
+    Paper specification: Context window size = 5 (sliding window)
+    This creates sequences where each sequence uses the last 5 routes to predict the next route.
+    
     Args:
         df: DataFrame with clickstream data
         vocab: Vocabulary mapping page_id to integer
-        sequence_length: Length of input sequences
+        sequence_length: Length of input sequences (context window size = 5 per paper)
     
     Returns:
         Tuple of (X, y) where:
@@ -140,7 +150,8 @@ def create_sequences(df: pd.DataFrame, vocab: Dict[str, int],
         # Convert to integer indices
         page_indices = [vocab.get(pid, vocab['<UNK>']) for pid in page_ids]
         
-        # Create sequences
+        # Create sequences with sliding window (context window = sequence_length)
+        # Each sequence uses the last N routes to predict the next route
         for i in range(len(page_indices) - sequence_length):
             seq = page_indices[i:i + sequence_length]
             target = page_indices[i + sequence_length]
@@ -211,8 +222,8 @@ def main():
                        help='Length of input sequences')
     parser.add_argument('--train-split', type=float, default=TRAIN_SPLIT,
                        help='Fraction of data for training')
-    parser.add_argument('--mock-sessions', type=int, default=10000,
-                       help='Number of mock sessions to generate if no input file provided')
+    parser.add_argument('--mock-sessions', type=int, default=200000,
+                       help='Number of mock sessions to generate if no input file provided (paper: 200k sequences)')
     
     args = parser.parse_args()
     

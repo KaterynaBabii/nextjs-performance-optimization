@@ -13,8 +13,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-// Temporarily disabled to fix router errors
-// import { getPredictedRoutes } from '@/lib/prefetch-service'
+import { getPredictedRoutes, prewarmCDNCache } from '@/lib/prefetch-service'
 
 export const config = {
   matcher: [
@@ -75,31 +74,46 @@ export async function middleware(request: NextRequest) {
   }
 
   // 5. AI Prefetch integration (SERVER-SIDE ONLY)
-  // TEMPORARILY DISABLED - Re-enable after fixing router errors
   // Get predicted routes and pass them to client via response header
-  /*
   const pathHistory = request.cookies.get('path-history')?.value || '[]'
   let predictedRoutes: string[] = []
   
   try {
     const history = JSON.parse(pathHistory)
-    const recentPaths = history.slice(-5) // Last 5 paths
+    const recentPaths = history.slice(-5) // Last 5 paths (context window size per paper)
     
     if (recentPaths.length >= 3) {
+      // Measure AI inference overhead (per paper: <2% overhead)
+      const inferenceStart = Date.now()
+      
       // Call server-side prediction function (NO router, NO client APIs)
       predictedRoutes = await getPredictedRoutes(recentPaths)
+      
+      const inferenceTime = Date.now() - inferenceStart
+      
+      // Log overhead for monitoring (can be removed in production)
+      if (process.env.NODE_ENV === 'development') {
+        console.debug(`[MIDDLEWARE] AI inference time: ${inferenceTime}ms`)
+      }
       
       // Pass predicted routes to client via response header
       // Client component will read this and prefetch routes
       if (predictedRoutes.length > 0) {
         response.headers.set('X-Prefetch-Routes', JSON.stringify(predictedRoutes))
+        
+        // CDN Prewarm: Trigger background fetches to prewarm edge cache
+        // This implements the paper's claim: "integrating with the CDN cache to prewarm edge nodes"
+        // Fire-and-forget: doesn't block user request
+        const baseUrl = `${request.nextUrl.protocol}//${request.nextUrl.host}`
+        prewarmCDNCache(predictedRoutes, baseUrl).catch(() => {
+          // Silently fail - prewarm is non-critical
+        })
       }
     }
   } catch (e) {
     // Invalid path history or prediction error, ignore
     // Prefetch is non-blocking, so we continue
   }
-  */
 
   // Update path history
   const currentPath = request.nextUrl.pathname
