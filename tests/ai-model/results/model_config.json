@@ -1,0 +1,13 @@
+{
+  "sequence_length": 20,
+  "embedding_size": 64,
+  "lstm_units": 128,
+  "batch_size": 64,
+  "learning_rate": 0.001,
+  "vocab_size": 52,
+  "num_classes": 50,
+  "final_val_loss": 3.9125096797943115,
+  "final_val_accuracy": 0.019282421097159386,
+  "training_samples": 99777,
+  "validation_samples": 24945
+}
