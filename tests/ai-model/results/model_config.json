@@ -1,13 +1,14 @@
 {
-  "sequence_length": 20,
-  "embedding_size": 64,
-  "lstm_units": 128,
+  "sequence_length": 5,
+  "embedding_size": 128,
+  "lstm_units_1": 64,
+  "lstm_units_2": 32,
   "batch_size": 64,
   "learning_rate": 0.001,
   "vocab_size": 52,
   "num_classes": 50,
-  "final_val_loss": 3.9125096797943115,
-  "final_val_accuracy": 0.019282421097159386,
+  "final_val_loss": 3.912280797958374,
+  "final_val_accuracy": 0.019001804292201996,
   "training_samples": 99777,
   "validation_samples": 24945
 }
