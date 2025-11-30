@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start -p 3001",
     "lint": "next lint",
-    "lighthouse": "node lighthouse/run-lighthouse.js",
+    "lighthouse": "node tests/metrics/run-lighthouse.js",
     "wpt": "node wpt/wpt-run.js",
     "analyze": "node analysis/analyze-metrics.js",
     "analyze:all": "node analysis/analyze-all-experiments.js",
@@ -26,8 +26,7 @@
     "next": "^14.2.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "@tensorflow/tfjs": "^4.15.0",
-    "@tensorflow/tfjs-node": "^4.15.0"
+    "@tensorflow/tfjs": "^4.15.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

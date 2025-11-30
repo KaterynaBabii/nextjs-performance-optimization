@@ -19,9 +19,9 @@
  */
 
 // TensorFlow.js import
-// Note: Edge Runtime (middleware) may not support @tensorflow/tfjs-node
+// Note: Edge Runtime (middleware) may not support @tensorflow/tfjs
 // In that case, the code will gracefully fall back to rule-based prediction
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 
 // Model and vocabulary cache (loaded once)
 let model: tf.LayersModel | null = null
