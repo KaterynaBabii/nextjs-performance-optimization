@@ -1,4 +1,4 @@
-// File: /Users/kateryna/Documents/nextjs-performance-optimization/repo/app/layout.tsx
+// File: /Users/katerynababii/Documents/Projects/nextjs-performance-optimization/repo/app/layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
