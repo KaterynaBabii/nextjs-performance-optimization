@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start -p 3001",
     "lint": "next lint",
-    "lighthouse": "node tests/metrics/run-lighthouse.js",
+    "lighthouse": "node lighthouse/run-lighthouse.js",
     "wpt": "node wpt/wpt-run.js",
     "analyze": "node analysis/analyze-metrics.js",
     "analyze:all": "node analysis/analyze-all-experiments.js",
