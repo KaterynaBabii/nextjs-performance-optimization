@@ -6,7 +6,7 @@ Complete guide for running all performance experiments in this project.
 
 ### Required Tools
 - **Node.js 18+**
-- **k6** (for load testing): [Install k6](https://k6.io/docs/getting-started/installation/)
+- **k6** (for load testing): [Install k6](https://grafana.com/docs/k6/latest/set-up/install-k6/)
 - **Artillery** (optional, for load testing): `npm install -g artillery`
 - **Python 3.8+** (for AI model training)
 

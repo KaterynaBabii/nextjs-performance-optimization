@@ -4,7 +4,7 @@
   "description": "Complete reproducibility package for IEEE Access paper: Performance Optimization Strategies for Large-scale Web Applications using Next.js",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
