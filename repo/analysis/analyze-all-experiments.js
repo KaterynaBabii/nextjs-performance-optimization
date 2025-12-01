@@ -15,20 +15,21 @@ const path = require('path')
 const { analyzeMetrics, mean, standardDeviation, confidenceInterval95 } = require('./analyze-metrics')
 
 // Experiment configurations
+// Paths are relative to the analysis directory, so we need to go up one level to reach repo/tests
 const EXPERIMENTS = {
   baseline: {
     name: 'Baseline (Unoptimized)',
-    dir: './tests/metrics/results/baseline',
+    dir: '../tests/metrics/results/baseline',
     color: '#ff6b6b',
   },
   optimized: {
     name: 'Optimized (ISR + Edge)',
-    dir: './tests/metrics/results/optimized',
+    dir: '../tests/metrics/results/optimized',
     color: '#4ecdc4',
   },
   aiEnhanced: {
     name: 'AI-Enhanced (with Prefetching)',
-    dir: './tests/metrics/results/ai-enhanced',
+    dir: '../tests/metrics/results/ai-enhanced',
     color: '#95e1d3',
   },
 }
@@ -37,17 +38,17 @@ const EXPERIMENTS = {
 const LOAD_TEST_EXPERIMENTS = {
   k6Ramp: {
     name: 'k6 Ramp Test',
-    dir: './tests/load/results/k6-ramp',
+    dir: '../tests/load/results/k6-ramp',
     type: 'k6',
   },
   k6Spike: {
     name: 'k6 Spike Test',
-    dir: './tests/load/results/k6-spike',
+    dir: '../tests/load/results/k6-spike',
     type: 'k6',
   },
   artillerySpike: {
     name: 'Artillery Spike Test',
-    dir: './tests/load/results/artillery-spike',
+    dir: '../tests/load/results/artillery-spike',
     type: 'artillery',
   },
 }
@@ -300,6 +301,8 @@ function generateComparisonTable(allResults, outputPath) {
  * Generate HTML report
  */
 function generateHTMLReport(allResults, outputPath) {
+  const hasData = allResults && allResults.length > 0 && allResults.some(exp => exp && exp.results && exp.results.length > 0)
+  
   const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -314,14 +317,24 @@ function generateHTMLReport(allResults, outputPath) {
     tr:nth-child(even) { background-color: #f9f9f9; }
     .metric-section { margin-bottom: 3rem; }
     .experiment-name { font-weight: bold; color: #0070f3; }
+    .no-data { 
+      padding: 2rem; 
+      background-color: #fff3cd; 
+      border: 1px solid #ffc107; 
+      border-radius: 4px; 
+      margin-top: 2rem;
+    }
+    .no-data h3 { color: #856404; margin-top: 0; }
+    .no-data ul { margin: 1rem 0; padding-left: 2rem; }
+    .no-data li { margin: 0.5rem 0; }
   </style>
 </head>
 <body>
   <h1>Performance Analysis Report</h1>
   <p>Generated: ${new Date().toISOString()}</p>
   
-  ${allResults.map(exp => {
-    if (!exp || !exp.results) return ''
+  ${hasData ? allResults.map(exp => {
+    if (!exp || !exp.results || exp.results.length === 0) return ''
     
     return `
     <div class="metric-section">
@@ -352,7 +365,34 @@ function generateHTMLReport(allResults, outputPath) {
       </table>
     </div>
     `
-  }).join('')}
+  }).join('') : `
+    <div class="no-data">
+      <h3>⚠️ No Experiment Data Available</h3>
+      <p>The analysis report is empty because no experiment data was found. To generate a report with data, you need to:</p>
+      <ul>
+        <li><strong>Run Performance Metrics Tests:</strong>
+          <ul>
+            <li>Baseline: <code>tests/metrics/results/baseline/</code></li>
+            <li>Optimized: <code>tests/metrics/results/optimized/</code></li>
+            <li>AI-Enhanced: <code>tests/metrics/results/ai-enhanced/</code></li>
+          </ul>
+        </li>
+        <li><strong>Run Load Tests:</strong>
+          <ul>
+            <li>k6 Ramp: <code>tests/load/results/k6-ramp/</code></li>
+            <li>k6 Spike: <code>tests/load/results/k6-spike/</code></li>
+            <li>Artillery: <code>tests/load/results/artillery-spike/</code></li>
+          </ul>
+        </li>
+      </ul>
+      <p><strong>Next Steps:</strong></p>
+      <ol>
+        <li>Run your experiments following the EXPERIMENTS-GUIDE.md</li>
+        <li>Collect metrics data in the expected directories</li>
+        <li>Re-run this analysis script: <code>node analyze-all-experiments.js</code></li>
+      </ol>
+    </div>
+  `}
 </body>
 </html>`
   
@@ -444,7 +484,9 @@ function analyzeAllExperiments(outputDir) {
 
 // Command-line interface
 if (require.main === module) {
-  const outputDir = process.argv[2] || './analysis/results/all-experiments'
+  // Default to results/all-experiments (relative to analysis directory)
+  // This avoids creating nested analysis/analysis/ structure
+  const outputDir = process.argv[2] || './results/all-experiments'
   analyzeAllExperiments(outputDir)
 }
 
