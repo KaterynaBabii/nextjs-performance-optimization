@@ -4,9 +4,9 @@
   "description": "Complete reproducibility package for IEEE Access paper: Performance Optimization Strategies for Large-scale Web Applications using Next.js",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3001",
     "lint": "next lint",
     "lighthouse": "node lighthouse/run-lighthouse.js",
     "wpt": "node wpt/wpt-run.js",
@@ -26,8 +26,7 @@
     "next": "^14.2.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "@tensorflow/tfjs": "^4.15.0",
-    "@tensorflow/tfjs-node": "^4.15.0"
+    "@tensorflow/tfjs": "^4.15.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

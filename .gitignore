@@ -4,6 +4,8 @@
 /node_modules
 /.pnp
 .pnp.js
+/repo/node_modules
+/repo/.next
 
 # testing
 /coverage

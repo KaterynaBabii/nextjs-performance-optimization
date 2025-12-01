@@ -58,19 +58,19 @@ npm run dev
 # Main application
 cd repo
 npm run dev
-# Starts at http://localhost:3000
+# Starts at http://localhost:3001
 ```
 
 ### 3. Web Vitals Dashboard
 
-1. Navigate to `http://localhost:3000`
+1. Navigate to `http://localhost:3001`
 2. Metrics are automatically collected
 3. View dashboard at `http://localhost:3000/metrics`
 4. Dashboard auto-refreshes every 5 seconds
 
 ### 4. Performance Optimization App
 
-1. Navigate to `http://localhost:3000` (repo app)
+1. Navigate to `http://localhost:3001` (repo app)
 2. Browse categories, products, and profile pages
 3. AI-powered prefetching works automatically
 4. Check browser console for prefetch logs
