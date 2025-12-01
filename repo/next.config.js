@@ -1,17 +1,29 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Experimental features for edge runtime
-  experimental: {
-    runtime: 'edge',
-  },
   // Image optimization
   images: {
     domains: ['localhost'],
     formats: ['image/avif', 'image/webp'],
   },
-  // ISR configuration
-  revalidate: 60, // Revalidate every 60 seconds
+  // Webpack configuration to handle optional TensorFlow dependency
+  webpack: (config, { isServer }) => {
+    // Mark TensorFlow.js as external for server-side builds
+    // This allows it to be loaded dynamically at runtime without breaking the build
+    if (isServer) {
+      const originalExternals = config.externals || []
+      config.externals = [
+        ...(Array.isArray(originalExternals) ? originalExternals : [originalExternals]),
+        ({ request }, callback) => {
+          if (request === '@tensorflow/tfjs') {
+            return callback(null, `commonjs ${request}`)
+          }
+          callback()
+        }
+      ]
+    }
+    return config
+  },
   // Headers for security and performance
   async headers() {
     return [

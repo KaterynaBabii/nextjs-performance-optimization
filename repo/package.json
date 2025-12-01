@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start -p 3001",
     "lint": "next lint",
+    "clean": "rm -rf .next out",
     "lighthouse": "node lighthouse/run-lighthouse.js",
     "wpt": "node wpt/wpt-run.js",
     "analyze": "node analysis/analyze-metrics.js",
@@ -23,18 +24,17 @@
     "deploy:model": "bash scripts/deploy-model.sh"
   },
   "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0",
     "next": "^14.2.0",
     "react": "^18.3.0",
-    "react-dom": "^18.3.0",
-    "@tensorflow/tfjs": "^4.15.0"
+    "react-dom": "^18.3.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "typescript": "^5.3.0",
     "lighthouse": "^11.4.0",
-    "puppeteer": "^21.6.0"
+    "puppeteer": "^21.6.0",
+    "typescript": "^5.3.0"
   }
 }
-
