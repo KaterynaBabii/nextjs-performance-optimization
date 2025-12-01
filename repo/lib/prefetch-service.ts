@@ -18,16 +18,51 @@
  * - Context window: 5 routes
  */
 
-// TensorFlow.js import
+// TensorFlow.js import - dynamic import to support Edge Runtime
 // Note: Edge Runtime (middleware) may not support @tensorflow/tfjs-node
 // In that case, the code will gracefully fall back to rule-based prediction
-import * as tf from '@tensorflow/tfjs-node'
+// Using 'any' type to avoid TypeScript checking the module at compile time
+let tf: any = null
+let tfLoadPromise: Promise<boolean> | null = null
 
 // Model and vocabulary cache (loaded once)
-let model: tf.LayersModel | null = null
+let model: any = null // tf.LayersModel | null
 let vocab: Record<string, number> | null = null
 let reverseVocab: Record<number, string> | null = null
 let modelLoadPromise: Promise<void> | null = null
+
+/**
+ * Dynamically load TensorFlow.js - only when needed and only if available
+ * This allows the code to work in Edge Runtime where tfjs-node may not be available
+ */
+async function loadTensorFlow(): Promise<boolean> {
+  if (tf) {
+    return true // Already loaded
+  }
+
+  if (tfLoadPromise) {
+    return await tfLoadPromise
+  }
+
+  tfLoadPromise = (async (): Promise<boolean> => {
+    try {
+      // Try to load tfjs-node (Node.js runtime) using dynamic import
+      // In Edge Runtime, this will fail gracefully
+      // Using string literal to avoid TypeScript module resolution at compile time
+      const tfModule = await import('@tensorflow/tfjs-node' as string)
+      tf = tfModule
+      console.log('[AI-MODEL] ✅ TensorFlow.js loaded successfully')
+      return true
+    } catch (error) {
+      console.warn('[AI-MODEL] ⚠️ Could not load @tensorflow/tfjs-node, using rule-based fallback')
+      console.warn('[AI-MODEL] Error:', error instanceof Error ? error.message : String(error))
+      tf = null
+      return false
+    }
+  })()
+
+  return await tfLoadPromise
+}
 
 /**
  * Load TensorFlow.js model and vocabulary
@@ -46,6 +81,16 @@ async function loadModel(): Promise<void> {
 
   modelLoadPromise = (async () => {
     try {
+      // First, try to load TensorFlow.js
+      const tfLoaded = await loadTensorFlow()
+      if (!tfLoaded || !tf) {
+        console.warn('[AI-MODEL] ⚠️ TensorFlow.js not available, using rule-based fallback')
+        model = null
+        vocab = null
+        reverseVocab = null
+        return
+      }
+
       // Load model from public directory (or CDN)
       // In production, this would be:
       // const modelUrl = process.env.MODEL_URL || '/models/tfjs_model/model.json'
@@ -132,7 +177,7 @@ function pathsToSequence(paths: string[]): number[] {
  * @returns Array of predicted route strings (top 3)
  */
 async function predictWithModel(paths: string[]): Promise<string[]> {
-  if (!model || !vocab || !reverseVocab) {
+  if (!model || !vocab || !reverseVocab || !tf) {
     return [] // Fall back to rule-based
   }
 
@@ -147,7 +192,7 @@ async function predictWithModel(paths: string[]): Promise<string[]> {
     const inputTensor = tf.tensor2d([sequence], [1, 5])
 
     // Run inference
-    const predictions = model.predict(inputTensor) as tf.Tensor
+    const predictions = model.predict(inputTensor) as any
 
     // Get top-3 predictions
     const topK = await tf.topk(predictions, 3)
