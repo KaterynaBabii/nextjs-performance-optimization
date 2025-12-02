@@ -13,7 +13,7 @@
 // Import web-vitals library (assumes it's available globally or via CDN)
 // For Node.js/Puppeteer: use dynamic import or inject script tag
 
-const API_ENDPOINT = process.env.API_ENDPOINT || 'http://localhost:3000/api/web-vitals';
+const API_ENDPOINT = 'http://localhost:3000/api/web-vitals';
 
 /**
  * Collect Core Web Vitals using web-vitals library
