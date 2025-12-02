@@ -9,31 +9,77 @@ const http = require('http');
 const { performance } = require('perf_hooks');
 const path = require('path');
 
+// Parse command line arguments
+const args = process.argv.slice(2);
+const outputArg = args.find(arg => arg.startsWith('--output='))?.split('=')[1] || 
+                  args.find(arg => arg === '--output') && args[args.indexOf('--output') + 1];
+
 async function runWithPuppeteer() {
   console.log('🤖 Attempting with Puppeteer...');
   
   let browser;
+  const maxRetries = 2;
+  
+  // Try system Chrome first, then Puppeteer's bundled Chrome
+  const chromePaths = [
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    puppeteer.executablePath()
+  ];
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    for (const chromePath of chromePaths) {
+      try {
+        // Launch browser with optimized settings
+        browser = await puppeteer.launch({
+          headless: 'new',
+          executablePath: chromePath,
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--disable-extensions',
+            '--disable-background-timer-throttling',
+            '--disable-backgrounding-occluded-windows',
+            '--disable-renderer-backgrounding',
+            '--disable-features=TranslateUI',
+            '--disable-ipc-flooding-protection',
+            '--js-flags=--max-old-space-size=4096',
+            '--remote-debugging-port=0' // Use random port
+          ],
+          ignoreHTTPSErrors: true,
+          timeout: 60000
+        });
+        break; // Success, exit loops
+      } catch (launchError) {
+        if (chromePath === chromePaths[chromePaths.length - 1] && attempt === maxRetries) {
+          throw launchError; // Last attempt failed
+        }
+        continue; // Try next path
+      }
+    }
+    if (browser) break; // Success, exit retry loop
+    
+    if (attempt < maxRetries) {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+  }
+  
+  if (!browser) {
+    throw new Error('Failed to launch browser after all attempts');
+  }
+  
   try {
-    // Launch browser with optimized settings
-    browser = await puppeteer.launch({
-      headless: 'new',
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--disable-extensions',
-        '--disable-background-timer-throttling',
-        '--disable-backgrounding-occluded-windows',
-        '--disable-renderer-backgrounding',
-        '--disable-features=TranslateUI',
-        '--disable-ipc-flooding-protection',
-        '--js-flags=--max-old-space-size=4096',
-        '--single-process',
-      ],
+    const page = await browser.newPage();
+    
+    // Handle page errors gracefully
+    page.on('error', (error) => {
+      console.warn('Page error (non-fatal):', error.message);
     });
     
-    const page = await browser.newPage();
+    page.on('pageerror', (error) => {
+      console.warn('Page JavaScript error (non-fatal):', error.message);
+    });
     
     // Set longer timeouts
     page.setDefaultTimeout(30000);
@@ -49,48 +95,121 @@ async function runWithPuppeteer() {
       }
     });
     
-    // Inject web-vitals library first
-    await page.addScriptTag({ 
-      url: 'https://unpkg.com/web-vitals@3/dist/web-vitals.umd.js',
-      waitUntil: 'load'
-    });
-    
-    // Load and inject the collect-core-web-vitals script
-    const scriptPath = path.resolve(__dirname, '../../tests/metrics/collect-core-web-vitals.js');
-    const scriptContent = require('fs').readFileSync(scriptPath, 'utf8');
-    
-    // Navigate to the app
+    // Navigate to the app first
     console.log('🌐 Navigating to page...');
     await page.goto('http://localhost:3001', { 
       waitUntil: 'domcontentloaded',
       timeout: 30000 
     });
     
-    // Inject the script content
-    console.log('📝 Injecting Core Web Vitals collection script...');
-    await page.evaluate(scriptContent);
+    // Inject web-vitals library after navigation
+    console.log('📝 Loading web-vitals library...');
+    try {
+      await page.addScriptTag({ 
+        url: 'https://unpkg.com/web-vitals@3/dist/web-vitals.umd.js'
+      });
+      await page.waitForFunction(() => typeof onTTFB !== 'undefined', { timeout: 10000 });
+    } catch (scriptError) {
+      console.warn('⚠️ Could not load web-vitals from CDN, using Performance API...');
+    }
     
-    // Initialize collection
-    console.log('⚡ Starting metrics collection...');
-    await page.evaluate(() => {
-      if (typeof window.initWebVitalsCollection === 'function') {
-        window.initWebVitalsCollection();
-      } else if (typeof window.collectWebVitals === 'function') {
-        window.collectWebVitals();
-      }
-    });
+    // Collect metrics using Performance API
+    console.log('⚡ Collecting Core Web Vitals...');
+    await page.waitForTimeout(2000);
     
-    // Wait for metrics to be collected
-    console.log('⏱️ Waiting 15 seconds for metrics collection...');
-    await new Promise(resolve => setTimeout(resolve, 15000));
+    // Trigger interaction for FID
+    try {
+      await page.mouse.move(100, 100);
+      await page.mouse.click(100, 100);
+      await page.waitForTimeout(500);
+    } catch (e) {
+      // Ignore
+    }
     
-    // Try to get any collected metrics
+    // Collect metrics
     const metrics = await page.evaluate(() => {
-      return window.webVitalsMetrics || null;
+      return new Promise((resolve) => {
+        const collected = {
+          ttfb: null,
+          lcp: null,
+          fid: null,
+          cls: null
+        };
+
+        // TTFB from Performance API
+        const navigation = performance.getEntriesByType('navigation')[0];
+        if (navigation) {
+          collected.ttfb = navigation.responseStart - navigation.requestStart;
+        }
+
+        // Use web-vitals if available, otherwise use Performance API
+        if (typeof onTTFB !== 'undefined') {
+          const captureMetric = (metric) => {
+            collected[metric.name.toLowerCase()] = metric.value;
+          };
+          onTTFB(captureMetric);
+          onLCP(captureMetric);
+          onFID(captureMetric);
+          onCLS(captureMetric);
+        } else {
+          // Fallback to Performance API
+          const lcpObserver = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            if (entries.length > 0) {
+              const lastEntry = entries[entries.length - 1];
+              collected.lcp = lastEntry.renderTime || lastEntry.loadTime;
+            }
+          });
+          try {
+            lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+          } catch (e) {}
+
+          const fidObserver = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            if (entries.length > 0) {
+              collected.fid = entries[0].processingStart - entries[0].startTime;
+            }
+          });
+          try {
+            fidObserver.observe({ entryTypes: ['first-input'] });
+          } catch (e) {}
+
+          const clsObserver = new PerformanceObserver((list) => {
+            let clsValue = 0;
+            for (const entry of list.getEntries()) {
+              if (!entry.hadRecentInput) {
+                clsValue += entry.value;
+              }
+            }
+            collected.cls = clsValue;
+          });
+          try {
+            clsObserver.observe({ entryTypes: ['layout-shift'] });
+          } catch (e) {}
+        }
+
+        // Wait for metrics
+        let checkCount = 0;
+        const maxChecks = 200;
+        const checkComplete = setInterval(() => {
+          checkCount++;
+          if ((collected.ttfb !== null && collected.lcp !== null && 
+               collected.fid !== null && collected.cls !== null) || 
+              checkCount >= maxChecks) {
+            clearInterval(checkComplete);
+            resolve(collected);
+          }
+        }, 100);
+      });
     });
     
-    if (metrics) {
-      console.log('\n✅ Collected Web Vitals with Puppeteer:', JSON.stringify(metrics, null, 2));
+    if (metrics && (metrics.ttfb !== null || metrics.lcp !== null || 
+                    metrics.fid !== null || metrics.cls !== null)) {
+      console.log('\n✅ Collected Web Vitals with Puppeteer:');
+      if (metrics.ttfb !== null) console.log(`   TTFB: ${metrics.ttfb.toFixed(2)}ms`);
+      if (metrics.lcp !== null) console.log(`   LCP: ${metrics.lcp.toFixed(2)}ms`);
+      if (metrics.fid !== null) console.log(`   FID: ${metrics.fid.toFixed(2)}ms`);
+      if (metrics.cls !== null) console.log(`   CLS: ${metrics.cls.toFixed(3)}`);
       saveMetrics(metrics, 'puppeteer');
       return true;
     } else {
@@ -99,16 +218,27 @@ async function runWithPuppeteer() {
     }
     
   } catch (error) {
-    if (error.message.includes('socket hang up') || 
-        error.message.includes('ECONNRESET') ||
-        error.message.includes('read ECONNRESET')) {
-      console.log('⚠️ Puppeteer failed with socket error');
+    const errorMsg = error.message || String(error);
+    if (errorMsg.includes('socket hang up') || 
+        errorMsg.includes('ECONNRESET') ||
+        errorMsg.includes('read ECONNRESET') ||
+        errorMsg.includes('Failed to launch browser') ||
+        errorMsg.includes('ERR_CONNECTION_REFUSED') ||
+        errorMsg.includes('Navigation timeout')) {
+      console.log('⚠️ Puppeteer failed:', errorMsg);
+      if (errorMsg.includes('ERR_CONNECTION_REFUSED')) {
+        console.log('💡 Make sure your Next.js server is running: cd repo && npm run dev');
+      }
       return false;
     }
     throw error;
   } finally {
     if (browser) {
-      await browser.close();
+      try {
+        await browser.close();
+      } catch (e) {
+        // Ignore close errors
+      }
     }
   }
 }
@@ -171,7 +301,17 @@ async function runWithHTTP() {
     
     return true;
   } catch (error) {
-    console.error('HTTP method error:', error.message);
+    // Handle AggregateError (can contain multiple errors)
+    let errorMsg = error.message || String(error);
+    if (error.name === 'AggregateError' && error.errors && error.errors.length > 0) {
+      errorMsg = error.errors.map(e => e.message || String(e)).join('; ');
+    }
+    
+    console.error('HTTP method error:', errorMsg);
+    if (errorMsg.includes('ECONNREFUSED') || errorMsg.includes('connect') || 
+        errorMsg.includes('ECONNRESET') || errorMsg.includes('socket')) {
+      console.error('💡 Make sure your Next.js server is running: cd repo && npm run dev');
+    }
     throw error;
   }
 }
@@ -184,7 +324,28 @@ function saveMetrics(metrics, method) {
     fs.mkdirSync(resultsDir, { recursive: true });
   }
   
-  const resultsFile = path.join(resultsDir, `core-web-vitals-${method}-${Date.now()}.json`);
+  // Use provided output path, or default to lighthouse-run-XXX.json naming
+  let resultsFile;
+  if (outputArg) {
+    // Custom output path provided
+    resultsFile = path.isAbsolute(outputArg) 
+      ? outputArg 
+      : path.join(resultsDir, path.basename(outputArg));
+  } else {
+    // Default naming: lighthouse-run-001.json, lighthouse-run-002.json, etc.
+    const existingFiles = fs.readdirSync(resultsDir)
+      .filter(f => f.startsWith('lighthouse-run-') && f.endsWith('.json'))
+      .map(f => {
+        const match = f.match(/lighthouse-run-(\d+)\.json/);
+        return match ? parseInt(match[1], 10) : 0;
+      })
+      .filter(n => !isNaN(n))
+      .sort((a, b) => b - a);
+    
+    const nextNumber = existingFiles.length > 0 ? existingFiles[0] + 1 : 1;
+    resultsFile = path.join(resultsDir, `lighthouse-run-${String(nextNumber).padStart(3, '0')}.json`);
+  }
+  
   fs.writeFileSync(resultsFile, JSON.stringify({
     timestamp: new Date().toISOString(),
     method: method,
@@ -196,28 +357,45 @@ function saveMetrics(metrics, method) {
 async function runLighthouse() {
   console.log('🚀 Starting Core Web Vitals collection for: http://localhost:3001');
   
+  let puppeteerSuccess = false;
+  let httpSuccess = false;
+  
+  // Try Puppeteer first
   try {
-    // Try Puppeteer first
-    const success = await runWithPuppeteer();
-    
-    if (!success) {
-      // Fall back to HTTP
-      await runWithHTTP();
-    }
-    
-    console.log('\n✅ Metrics collection completed!');
-    
+    puppeteerSuccess = await runWithPuppeteer();
   } catch (error) {
-    console.error('❌ Error during collection:', error.message);
-    // Try HTTP as last resort
+    // Handle AggregateError
+    let errorMsg = error.message || String(error);
+    if (error.name === 'AggregateError' && error.errors && error.errors.length > 0) {
+      errorMsg = error.errors.map(e => e.message || String(e)).join('; ');
+    }
+    console.log('⚠️ Puppeteer failed:', errorMsg);
+  }
+  
+  // If Puppeteer failed, try HTTP fallback
+  if (!puppeteerSuccess) {
     try {
-      console.log('\n🌐 Attempting HTTP fallback...');
-      await runWithHTTP();
-      console.log('\n✅ Metrics collection completed with fallback!');
-    } catch (fallbackError) {
-      console.error('❌ All methods failed:', fallbackError.message);
+      httpSuccess = await runWithHTTP();
+    } catch (error) {
+      // Handle AggregateError
+      let errorMsg = error.message || String(error);
+      if (error.name === 'AggregateError' && error.errors && error.errors.length > 0) {
+        errorMsg = error.errors.map(e => e.message || String(e)).join('; ');
+      }
+      console.error('❌ HTTP fallback failed:', errorMsg);
+      if (errorMsg.includes('ECONNREFUSED') || errorMsg.includes('connect')) {
+        console.error('\n💡 Your Next.js server is not running.');
+        console.error('   Start it with: cd repo && npm run dev');
+      }
       process.exit(1);
     }
+  }
+  
+  if (puppeteerSuccess || httpSuccess) {
+    console.log('\n✅ Metrics collection completed!');
+  } else {
+    console.error('\n❌ All methods failed. Please start your server and try again.');
+    process.exit(1);
   }
 }
 
