@@ -15,7 +15,7 @@ This project implements a complete performance optimization system that:
 
 ## Reference Values
 
-The project uses the following reference values from the published experiment:
+The project aims to achieve the following performance targets through optimization:
 
 ### Baseline (Unoptimized)
 - **TTFB**: 320 ms
