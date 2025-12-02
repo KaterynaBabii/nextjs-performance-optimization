@@ -92,7 +92,7 @@ cd repo
 # Run single Lighthouse test
 npm run lighthouse
 
-# Or manually
+# Or manually (from repo directory)
 node lighthouse/run-lighthouse.js
 
 # Run 30 tests (for statistical analysis)
@@ -103,13 +103,29 @@ done
 ```
 
 #### Manual Core Web Vitals Collection
+For detailed metrics (LCP, FID, CLS) in browser:
+
+```bash
+# 1. Start the application
+cd repo
+npm run dev
+
+# 2. Open browser and collect metrics
+# - Open http://localhost:3001 in Chrome
+# - Open DevTools console
+# - Copy contents of tests/metrics/collect-core-web-vitals.js
+# - Paste and run in console
+# - Interact with the page to generate FID events
+```
+
+#### Browser-based Collection
 1. Start the application:
    ```bash
    cd repo
    npm run dev
    ```
 
-2. Navigate to `http://localhost:3000`
+2. Navigate to `http://localhost:3001`
 3. Open DevTools → Performance tab
 4. Record performance
 5. Check Core Web Vitals in the console

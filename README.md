@@ -51,11 +51,11 @@ npm install
 ### 2. Run Development Server
 
 ```bash
-# Root app (Web Vitals experiment)
+# Root app (Web Vitals dashboard)
 npm run dev
 # Starts at http://localhost:3000
 
-# Main application
+# Main application (performance optimization app)
 cd repo
 npm run dev
 # Starts at http://localhost:3001
@@ -63,10 +63,19 @@ npm run dev
 
 ### 3. Web Vitals Dashboard
 
-1. Navigate to `http://localhost:3001`
-2. Metrics are automatically collected
-3. View dashboard at `http://localhost:3000/metrics`
-4. Dashboard auto-refreshes every 5 seconds
+1. Start both servers:
+   ```bash
+   # Terminal 1: Root app
+   npm run dev
+   
+   # Terminal 2: Main app
+   cd repo
+   npm run dev
+   ```
+2. Navigate to `http://localhost:3001` (main app)
+3. Metrics are automatically collected and sent to dashboard
+4. View dashboard at `http://localhost:3000/metrics`
+5. Dashboard auto-refreshes every 5 seconds
 
 ### 4. Performance Optimization App
 
@@ -226,10 +235,16 @@ artillery run artillery-spike.yml
 
 ### Metrics Collection
 ```bash
-cd repo/tests/metrics
-# Run Lighthouse tests
-# Collect Core Web Vitals
+cd repo
+npm run lighthouse    # Collects Core Web Vitals
+# Results saved in repo/lighthouse/results/
 ```
+
+For full Core Web Vitals (LCP, FID, CLS) in browser:
+1. Open http://localhost:3001 in browser
+2. Open DevTools console
+3. Copy and paste contents of `repo/tests/metrics/collect-core-web-vitals.js`
+4. Run the script to collect detailed metrics
 
 ### Analysis
 ```bash
