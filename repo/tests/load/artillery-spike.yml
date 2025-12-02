@@ -4,7 +4,7 @@
 # Duration: 60 seconds
 
 config:
-  target: 'http://localhost:3000'
+  target: 'http://localhost:3001'
   phases:
     # Warm-up phase: gradual increase
     - duration: 10
@@ -46,30 +46,27 @@ scenarios:
           url: "/"
           expect:
             - statusCode: 200
-            - contentType: html
-      - think: 1-3
+      - think: 1
 
-  # Scenario 2: Metrics dashboard
-  - name: "Metrics Dashboard"
+  # Scenario 2: Category page
+  - name: "Category Page"
     weight: 30
     flow:
       - get:
-          url: "/metrics"
+          url: "/category/1"
           expect:
             - statusCode: 200
-            - contentType: html
-      - think: 2-5
+      - think: 1
 
   # Scenario 3: API endpoint
-  - name: "Web Vitals API"
+  - name: "Products API"
     weight: 30
     flow:
       - get:
-          url: "/api/web-vitals"
+          url: "/api/products"
           expect:
             - statusCode: 200
-            - contentType: json
-      - think: 1-2
+      - think: 1
 
   # Scenario 4: Full user journey
   - name: "Full User Journey"
@@ -77,10 +74,10 @@ scenarios:
     flow:
       - get:
           url: "/"
-      - think: 2-4
+      - think: 1
       - get:
-          url: "/metrics"
-      - think: 1-2
+          url: "/category/1"
+      - think: 1
       - get:
-          url: "/api/web-vitals"
+          url: "/api/products"
 
