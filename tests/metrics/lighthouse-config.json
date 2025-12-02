@@ -1,0 +1,36 @@
+{
+  "extends": "lighthouse:default",
+  "settings": {
+    "onlyCategories": ["performance"],
+    "throttlingMethod": "devtools",
+    "throttling": {
+      "rttMs": 80,
+      "throughputKbps": 10240,
+      "cpuSlowdownMultiplier": 4,
+      "requestLatencyMs": 80,
+      "downloadThroughputKbps": 10240,
+      "uploadThroughputKbps": 10240
+    },
+    "emulatedFormFactor": "mobile",
+    "screenEmulation": {
+      "mobile": true,
+      "width": 412,
+      "height": 915,
+      "deviceScaleFactor": 2.625
+    },
+    "formFactor": "mobile",
+    "locale": "en-US",
+    "maxWaitForFcp": 30000,
+    "maxWaitForLoad": 45000,
+    "skipAboutBlank": false,
+    "disableStorageReset": false,
+    "clearStorageTypes": [
+      "cookies",
+      "localStorage",
+      "sessionStorage",
+      "indexedDB",
+      "websql",
+      "cacheStorage"
+    ]
+  }
+}
