@@ -569,11 +569,18 @@ function saveMetrics(metrics, method) {
   
   // Use provided output path, or default to lighthouse-run-XXX.json naming
   let resultsFile;
+  let runIndex = 0;
+  
   if (outputArg) {
     // Custom output path provided
     resultsFile = path.isAbsolute(outputArg) 
       ? outputArg 
       : path.join(resultsDir, path.basename(outputArg));
+    // Extract runIndex from filename if possible
+    const match = path.basename(outputArg).match(/lighthouse-run-(\d+)\.json/);
+    if (match) {
+      runIndex = parseInt(match[1], 10) - 1; // Convert 001 -> 0, 002 -> 1, etc.
+    }
   } else {
     // Default naming: lighthouse-run-001.json, lighthouse-run-002.json, etc.
     const existingFiles = fs.readdirSync(resultsDir)
@@ -586,6 +593,7 @@ function saveMetrics(metrics, method) {
       .sort((a, b) => b - a);
     
     const nextNumber = existingFiles.length > 0 ? existingFiles[0] + 1 : 1;
+    runIndex = nextNumber - 1; // Convert 001 -> 0, 002 -> 1, etc.
     resultsFile = path.join(resultsDir, `lighthouse-run-${String(nextNumber).padStart(3, '0')}.json`);
   }
   
